@@ -1,41 +1,22 @@
-# Dependency directories
-node_modules/
+# vscode
+.vscode 
 
-# Build output
+# Intellij
+*.iml
+.idea
+
+# npm
+node_modules
+
+# Don't include the compiled main.js file in the repo.
+# They should be uploaded to GitHub releases instead.
 main.js
-*.js.map
 
-# TypeScript compilation output
-*.tsbuildinfo
+# Exclude sourcemaps
+*.map
 
-# Editor directories and files
-.vscode/
-.idea/
-*.swp
-*.swo
+# obsidian
+data.json
 
-# Operating system files
+# Exclude macOS Finder (System Explorer) View States
 .DS_Store
-Thumbs.db
-
-# Obsidian workspace files
-.obsidian/
-
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Optional: ignore package-lock.json if you prefer not to commit it
-# package-lock.json
-
-# Optional: ignore yarn.lock if you're using Yarn and prefer not to commit it
-# yarn.lock
-
-# Ignore any local test vaults
-test-vault/
