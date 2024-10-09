@@ -1,14 +1,20 @@
-import { App, Plugin, PluginSettingTab, Setting, WorkspaceLeaf, ItemView } from 'obsidian';
+import { 
+  App,
+  Plugin,
+  PluginSettingTab,
+  Setting,
+  WorkspaceLeaf,
+  ItemView } from 'obsidian';
 
-export default class MyPlugin extends Plugin {
+export default class gsidianPlugin extends Plugin {
   async onload() {
-    this.addRibbonIcon('dice', 'Graphsidian', () => {
+    this.addRibbonIcon('bot', 'Graphsidian', () => {
       this.activateView();
     });
 
     this.registerView(
       'graphsidian-view',
-      (leaf) => new MyPluginView(leaf)
+      (leaf) => new GsidianView(leaf)
     );
   }
 
@@ -29,7 +35,7 @@ export default class MyPlugin extends Plugin {
   }
 }
 
-class MyPluginView extends ItemView {
+class GsidianView extends ItemView {
   constructor(leaf: WorkspaceLeaf) {
     super(leaf);
   }
@@ -52,4 +58,7 @@ class MyPluginView extends ItemView {
   async onClose() {
     // Nothing to clean up
   }
+
+
 }
+
