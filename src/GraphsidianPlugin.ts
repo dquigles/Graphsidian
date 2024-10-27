@@ -5,13 +5,18 @@ import {
     Setting,
     WorkspaceLeaf,
     ItemView } from 'obsidian';
-import { DEFAULT_SETTINGS } from './data/defaultSettings';
-import { GraphsidianSettings } from './model/GraphsidianSettings';
+import { DEFAULT_SETTINGS, GraphsidianSettingTab, GraphsidianSettings } from './settings/settings';
   
-  export class Graphsidian extends Plugin {
+
+
+  export class GraphsidianPlugin extends Plugin {
     settings: GraphsidianSettings;
 
     async onload() {
+      await this.loadSettings(); // Load settings first
+
+      this.addSettingTab(new GraphsidianSettingTab(this.app, this));
+
       this.addRibbonIcon('bot', 'Graphsidian', () => {
         this.activateView();
       });
