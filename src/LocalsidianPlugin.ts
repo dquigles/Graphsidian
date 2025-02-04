@@ -1,4 +1,4 @@
-import { ItemView, Plugin, WorkspaceLeaf } from "obsidian";
+import { ItemView, Notice, Plugin, WorkspaceLeaf } from "obsidian";
 import {
 	LocalsidianSettings,
 	DEFAULT_SETTINGS,
@@ -93,7 +93,7 @@ class LsidianView extends ItemView {
 		});
 
 		inputSection.createEl("label", {
-			text: "Enter your prompt:",
+			text: "Enter your notes you want to make prettier:",
 			cls: "localsidian-label",
 		});
 
@@ -149,6 +149,34 @@ class LsidianView extends ItemView {
 				this.processingAbortController = null;
 				processButton.style.display = "block";
 				stopButton.style.display = "none";
+			}
+		});
+
+		const outputActionsContainer = outputSection.createDiv({
+			cls: "localsidian-output-actions",
+		});
+
+		const copyButton = outputActionsContainer.createEl("button", {
+			text: "Copy to Clipboard",
+			cls: "localsidian-button localsidian-copy-button",
+		});
+
+		copyButton.addEventListener("click", async () => {
+			try {
+				await navigator.clipboard.writeText(
+					this.outputEl.textContent || ""
+				);
+				// Temporarily change button text to show success
+				const originalText = "Copy to Clipboard";
+				copyButton.textContent = "Copied!";
+				copyButton.addClass("localsidian-button-success");
+
+				setTimeout(() => {
+					copyButton.textContent = originalText;
+					copyButton.removeClass("localsidian-button-success");
+				}, 2000);
+			} catch (err) {
+				new Notice("Failed to copy to clipboard");
 			}
 		});
 
@@ -234,6 +262,26 @@ class LsidianView extends ItemView {
                 color: var(--text-error);
                 margin-top: 8px;
             }
+
+			.localsidian-output-actions {
+			margin-top: 8px;
+			display: flex;
+			justify-content: flex-end;
+			}
+
+			.localsidian-copy-button {
+				background-color: var(--interactive-normal);
+				color: var(--text-normal);
+			}
+
+			.localsidian-copy-button:hover {
+				background-color: var(--interactive-hover);
+			}
+
+			.localsidian-button-success {
+				background-color: var(--interactive-success) !important;
+				color: var(--text-on-accent) !important;
+			}
         `;
 		document.head.appendChild(style);
 	}
@@ -242,6 +290,31 @@ class LsidianView extends ItemView {
 		try {
 			this.processingAbortController = new AbortController();
 
+			const placeholderString = `You will be taking notes and formatting them for use in Obsidian MD. The notes will be provided to you as input. 
+
+Here are the steps you will follow:
+
+1. Read the notes provided in the input:
+<notes>
+${this.inputEl.value}
+</notes>
+
+2. Use the following markdown formatting to enhance the notes:
+   - Use \`#\` for headings (e.g., \`# Heading 1\`, \`## Heading 2\`).
+   - Use \`-\` or \`*\` for bullet points.
+   - Use \`1.\` for numbered lists.
+   - Use \`**text**\` for bold text and \`*text*\` for italic text.
+   - Use \`> text\` for blockquotes.
+   - Use \`[[link]]\` for internal links to other notes.
+   - Use \`![[image.png]]\` for embedding images.
+   - Use \`---\` for horizontal lines.
+
+3. Ensure the final output is clean and visually appealing, making use of the markdown features effectively.
+
+4. Write your formatted notes inside <formatted_notes> tags.
+
+<formatted_notes>
+</formatted_notes>`;
 			const response = await fetch(
 				`${this.settings.apiUrl}/api/generate`,
 				{
@@ -251,7 +324,7 @@ class LsidianView extends ItemView {
 					},
 					body: JSON.stringify({
 						model: this.settings.modelName,
-						prompt: this.inputEl.value,
+						prompt: placeholderString,
 						stream: true,
 					}),
 					signal: this.processingAbortController.signal,
