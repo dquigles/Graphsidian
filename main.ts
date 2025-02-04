@@ -1,3 +1,3 @@
-import { GraphsidianPlugin } from './src/GraphsidianPlugin';
+import { LocalsidianPlugin } from "./src/LocalsidianPlugin";
 
-export default GraphsidianPlugin;
+export default LocalsidianPlugin;
